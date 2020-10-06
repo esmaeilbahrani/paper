@@ -1,5 +1,5 @@
 <?php
-//pinoox app file, generated at "2019-12-28 13:49"
+//pinoox app file, generated at "2020-04-14 18:17"
 
 return array (
   'name' => 'paper',
@@ -9,12 +9,14 @@ return array (
   'version-name' => '1.3.5',
   'developer' => 'pinoox',
   'enable' => true,
-  'theme' => 'blue',
+  'theme' => 'mag',
   'theme-panel' => 'panel',
   'lang' => 'fa',
-  'service' => [
-      'cache/settings'
-  ]
+  'service' => 
+  array (
+    0 => 'cache/settings',
+  ),
+  'hidden' => false,
 );
 
 //end of app
