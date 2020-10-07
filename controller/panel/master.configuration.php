@@ -8,9 +8,13 @@
  * @author   Pinoox
  * @license  https://opensource.org/licenses/MIT MIT License
  */
+
 namespace pinoox\app\com_pinoox_paper\controller\panel;
 
+use pinoox\app\com_pinoox_manager\model\LangModel;
 use pinoox\component\app\AppProvider;
+use pinoox\component\Dir;
+use pinoox\component\HelperString;
 use pinoox\component\interfaces\ControllerInterface;
 use pinoox\component\Lang;
 use pinoox\component\Request;
@@ -28,8 +32,9 @@ class MasterConfiguration implements ControllerInterface
 
     public function __construct()
     {
-        $this->checkLogin();
+        //$this->checkLogin();
         $this->initTemplate();
+        $this->getAssets();
     }
 
     private function checkLogin()
@@ -47,8 +52,8 @@ class MasterConfiguration implements ControllerInterface
         $app = url('panel/');
         self::$template->set('_site', url('~'));
         self::$template->set('_app', $app);
-        self::$template->set('_lang', Lang::get('panel'));
         self::$template->set('_direction', rlang('paper.direction'));
+        $this->setLang();
     }
 
     public function _main()
@@ -68,4 +73,55 @@ class MasterConfiguration implements ControllerInterface
         exit;
     }
 
+    private function setLang()
+    {
+        $lang = Lang::get('panel');
+        self::$template->set('_lang', HelperString::encodeJson($lang, true));
+    }
+
+    private function getAssets()
+    {
+        $vendor_css = 'vendor.css';
+        $vendor_js = 'vendor.js';
+        $main_css = 'main.css';
+        $main_js = 'main.js';
+        $path = Dir::theme('dist/manifest.json');
+        if (is_file($path)) {
+            $manifest = file_get_contents($path);
+            $manifest = HelperString::decodeJson($manifest);
+
+            $this->changeScalarToArray($manifest, 'main');
+            foreach ($manifest['main'] as $item) {
+                if (HelperString::has($item, 'main.js'))
+                    $main_js = $item;
+                else if (HelperString::has($item, 'main.css'))
+                    $main_css = $item;
+            }
+            $this->changeScalarToArray($manifest, 'vendor');
+            foreach ($manifest['vendor'] as $item) {
+                if (HelperString::has($item, 'vendor.js'))
+                    $vendor_js = $item;
+                else if (HelperString::has($item, 'vendor.css'))
+                    $vendor_css = $item;
+            }
+        }
+
+        self::$template->assets = [
+            'vendor_css' => $vendor_css,
+            'vendor_js' => $vendor_js,
+            'main_css' => $main_css,
+            'main_js' => $main_js,
+        ];
+    }
+
+    private function changeScalarToArray(&$array, $key)
+    {
+        if (!isset($array[$key])) return;
+
+        $copy = $array[$key];
+        if (!is_array($copy)) {
+            unset($array[$key]);
+            $array[$key][] = $copy;
+        }
+    }
 }

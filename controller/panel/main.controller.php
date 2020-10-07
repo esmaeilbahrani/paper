@@ -36,17 +36,16 @@ class MainController extends MasterConfiguration
         self::$template->show('dashboard>main');
     }
 
-    public function assets()
+    public function dist()
     {
         $url = implode('/', Router::params());
-        if ($url === 'src/js/pinoox.js') {
+        if ($url === 'pinoox.js') {
             HelperHeader::contentType('application/javascript', 'UTF-8');
-            self::$template->view('assets/src/js/pinoox.js');
+            self::$template->view('dist/pinoox.js');
         } else {
-            self::_main();
+            self::error404();
         }
     }
-
 
     public function loadMostVisitedStats()
     {

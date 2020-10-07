@@ -10,7 +10,7 @@ return array (
   'developer' => 'pinoox',
   'enable' => true,
   'theme' => 'mag',
-  'theme-panel' => 'panel',
+  'theme-panel' => 'papyrus',
   'lang' => 'fa',
   'service' => 
   array (
